@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<!--
+  Assessment Cards v2 — bilingual EN/NL assessment-redesign aid.
+  Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0).
+  https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+  Adapted from:
+   - Gonsalves, C. (2024). Generative AI's Impact on Critical Thinking: Revisiting Bloom's Taxonomy.
+     Journal of Marketing Education. CC BY-NC 4.0.
+   - AI Assessment Scale (AIAS), Perkins, Furze, Roe & MacVaugh (2024). CC BY-NC-SA 4.0.
+     https://www.aiassessmentscale.com/
+   - Example matrix compiled by a colleague at Het Haagse CTL / THUAS, shared with permission.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assessment Cards / Assessment Kaarten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF6EE; --paper-2:#F3EDE1; --ink:#211F1A; --ink-soft:#5C564B;
+    --line:#E4DBCB; --card:#FFFFFF; --card-line:#EBE3D5;
+    --no:#3C5A6E; --partial:#A9711F; --full:#2D7A66;
+    --no-tint:#ECF1F4; --partial-tint:#F7EEDB; --full-tint:#E5F1ED;
+    --shadow:0 1px 2px rgba(33,31,26,.04), 0 8px 24px rgba(33,31,26,.06);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Hanken Grotesk",system-ui,-apple-system,sans-serif;
+    font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+
+  /* ---- Header ---- */
+  header.top{background:radial-gradient(120% 140% at 0% 0%,#FBF8F1 0%,var(--paper) 55%),var(--paper);
+    border-bottom:1px solid var(--line)}
+  .top-inner{padding:38px 0 30px}
+  .top-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin:0 0 12px}
+  .eyebrow .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--full);margin-right:9px;vertical-align:middle}
+  h1{font-family:"Fraunces",Georgia,serif;font-weight:600;font-optical-sizing:auto;
+    font-size:clamp(34px,5.2vw,56px);line-height:1.02;margin:0 0 14px;letter-spacing:-.01em}
+  h1 em{font-style:italic;color:var(--full)}
+  .lede{font-size:clamp(16px,2.1vw,19px);max-width:62ch;color:var(--ink-soft);margin:0}
+
+  /* ---- Lang toggle ---- */
+  .lang-toggle{display:flex;align-items:center;gap:0;border:1.5px solid var(--line);border-radius:999px;
+    overflow:hidden;flex-shrink:0;margin-top:4px;background:var(--card);box-shadow:var(--shadow)}
+  .lang-toggle button{font:inherit;font-weight:700;font-size:13px;letter-spacing:.04em;
+    background:transparent;border:0;padding:8px 16px;cursor:pointer;color:var(--ink-soft);transition:all .15s}
+  .lang-toggle button.active{background:var(--ink);color:var(--paper)}
+  .lang-toggle button:first-child{border-radius:999px 0 0 999px}
+  .lang-toggle button:last-child{border-radius:0 999px 999px 0}
+
+  /* ---- Framing callout ---- */
+  .frame{margin:26px 0 4px;border:1px solid var(--line);border-left:4px solid var(--partial);
+    background:#FBF7EE;border-radius:12px;padding:18px 20px}
+  .frame h2{font-family:"Fraunces",serif;font-size:18px;font-weight:600;margin:0 0 6px}
+  .frame p{margin:0 0 8px;font-size:15px;color:#43403a}
+  .frame p:last-child{margin-bottom:0}
+  .frame strong{color:var(--ink)}
+  details.notes{margin-top:14px}
+  details.notes summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--ink-soft);
+    list-style:none;display:inline-flex;align-items:center;gap:8px}
+  details.notes summary::-webkit-details-marker{display:none}
+  details.notes summary .chev{transition:transform .2s;font-size:12px}
+  details.notes[open] summary .chev{transform:rotate(90deg)}
+  details.notes ul{margin:10px 0 0;padding-left:20px;font-size:14px;color:#43403a}
+  details.notes li{margin:5px 0}
+
+  /* ---- Controls ---- */
+  .controls{position:sticky;top:0;z-index:20;background:rgba(250,246,238,.92);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:16px 0 14px;margin-top:30px}
+  .ctl-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .ctl-head .label{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+  .search{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--card-line);
+    border-radius:999px;padding:7px 14px;box-shadow:var(--shadow);min-width:230px}
+  .search input{border:0;outline:0;background:transparent;font:inherit;font-size:14px;width:100%;color:var(--ink)}
+  .search svg{flex:0 0 auto;opacity:.5}
+  .search button{border:0;background:transparent;cursor:pointer;color:var(--ink-soft);font-size:18px;line-height:1;padding:0;display:none}
+  .group-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;margin:2px 0 8px}
+  .pills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+  .pill{font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;border:1px solid var(--card-line);
+    background:var(--card);color:var(--ink);padding:7px 13px;border-radius:999px;transition:all .15s;white-space:nowrap}
+  .pill:hover{border-color:#cdbfa6;transform:translateY(-1px)}
+  .pill[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .pill .n{opacity:.55;font-weight:500;margin-left:6px;font-size:12px}
+
+  /* ---- Stage ---- */
+  .stage{padding:26px 0 60px}
+  .dim-head{margin:6px 0 20px}
+  .dim-head .kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--full);font-weight:700}
+  .dim-head h3{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(24px,3.6vw,34px);margin:6px 0 6px;letter-spacing:-.01em}
+  .dim-head p{margin:0;color:var(--ink-soft);max-width:70ch;font-size:15.5px}
+  .redesign-hint{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:13.5px;
+    color:#43403a;background:var(--paper-2);border-radius:999px;padding:6px 14px}
+  .columns{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start}
+  .col{background:transparent}
+  .col-head{border-radius:12px 12px 0 0;padding:13px 16px;color:#fff;position:sticky;top:150px}
+  .col-head .lv{font-weight:700;font-size:16px;letter-spacing:.01em;display:flex;align-items:center;gap:9px}
+  .col-head .sub{font-size:13px;opacity:.9;margin-top:3px;font-weight:500}
+  .col-head .badge{font-family:"Fraunces",serif;font-weight:900;font-size:15px;background:rgba(255,255,255,.18);
+    width:26px;height:26px;border-radius:7px;display:inline-grid;place-items:center}
+  .col[data-lv="no"] .col-head{background:var(--no)}
+  .col[data-lv="partial"] .col-head{background:var(--partial)}
+  .col[data-lv="full"] .col-head{background:var(--full)}
+  .col-body{border:1px solid var(--card-line);border-top:0;border-radius:0 0 12px 12px;
+    padding:14px;display:flex;flex-direction:column;gap:11px;background:#fff}
+  .col[data-lv="no"] .col-body{background:linear-gradient(180deg,var(--no-tint),#fff 60px)}
+  .col[data-lv="partial"] .col-body{background:linear-gradient(180deg,var(--partial-tint),#fff 60px)}
+  .col[data-lv="full"] .col-body{background:linear-gradient(180deg,var(--full-tint),#fff 60px)}
+  .card{background:var(--card);border:1px solid var(--card-line);border-radius:10px;
+    padding:12px 14px;font-size:14.5px;line-height:1.45;box-shadow:0 1px 1px rgba(33,31,26,.03);
+    transition:transform .12s,box-shadow .12s}
+  .card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .card .lead{font-weight:600}
+  .card .arrow{color:var(--ink-soft)}
+  .col[data-lv="no"] .card{border-left:3px solid var(--no)}
+  .col[data-lv="partial"] .card{border-left:3px solid var(--partial)}
+  .col[data-lv="full"] .card{border-left:3px solid var(--full)}
+  .results-meta{font-size:14px;color:var(--ink-soft);margin:0 0 16px}
+  .results{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .rcard{background:#fff;border:1px solid var(--card-line);border-radius:10px;padding:14px;box-shadow:0 1px 1px rgba(33,31,26,.03)}
+  .rtag{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;letter-spacing:.04em;
+    text-transform:uppercase;margin-bottom:8px}
+  .rtag .swatch{width:9px;height:9px;border-radius:3px}
+  .rtag .lvl{color:var(--ink-soft);font-weight:600;text-transform:none;letter-spacing:0}
+  .rcard p{margin:0;font-size:14.5px;line-height:1.45}
+  mark{background:#FBE7AE;padding:0 1px;border-radius:2px}
+  .empty{padding:40px;text-align:center;color:var(--ink-soft);border:1px dashed var(--line);border-radius:12px}
+
+  /* ---- Footer ---- */
+  footer{border-top:1px solid var(--line);background:var(--paper-2)}
+  .foot-inner{padding:30px 0 28px;display:grid;grid-template-columns:1.3fr 1fr;gap:30px}
+  footer h4{font-family:"Fraunces",serif;font-weight:600;font-size:16px;margin:0 0 10px}
+  footer p,footer li{font-size:13.5px;color:#46423a;line-height:1.55}
+  footer ul{margin:0;padding-left:18px}
+  footer li{margin:4px 0}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:6px}
+  .legend span{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600}
+  .legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
+  .printbtn{font:inherit;font-weight:600;font-size:13px;cursor:pointer;border:1px solid #cdbfa6;
+    background:#fff;border-radius:999px;padding:7px 15px;margin-top:14px}
+  .attrib{font-size:13px;color:#46423a;line-height:1.5;margin:0 0 10px}
+  .attrib a,.cc-text a{color:var(--full);text-decoration:none;font-weight:600}
+  .attrib a:hover,.cc-text a:hover{text-decoration:underline}
+  .muted{font-size:13px;color:var(--ink-soft);margin-top:12px}
+  .license-bar{display:flex;gap:20px;align-items:center;flex-wrap:wrap;
+    padding:18px 0 40px;border-top:1px solid var(--line)}
+  .cc-chips{display:inline-flex;gap:6px;flex:0 0 auto}
+  .cc-chips span{width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;
+    display:inline-grid;place-items:center;font-weight:700;font-size:12px;letter-spacing:.01em}
+  .cc-text{font-size:13px;color:#46423a;line-height:1.55;flex:1;min-width:260px}
+  .cc-text strong{color:var(--ink)}
+
+  @media(max-width:880px){
+    .columns{grid-template-columns:1fr}
+    .col-head{position:static}
+    .foot-inner{grid-template-columns:1fr}
+    .controls{position:static}
+  }
+  @media print{
+    .controls,.search,.printbtn,.redesign-hint,details.notes,.lang-toggle{display:none!important}
+    body{background:#fff}
+    .columns{grid-template-columns:repeat(3,1fr);gap:8px}
+    .card,.col-body,.rcard{box-shadow:none}
+    .col-head{position:static;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    header.top,footer{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    a{color:inherit;text-decoration:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="top-row">
+      <div>
+        <p class="eyebrow"><span class="dot"></span><span data-t="eyebrow"></span></p>
+        <h1 data-t="h1"></h1>
+        <p class="lede" data-t="lede"></p>
+      </div>
+      <div class="lang-toggle" role="group" aria-label="Language / Taal">
+        <button id="btnEN" class="active" onclick="setLang('en')">EN</button>
+        <button id="btnNL" onclick="setLang('nl')">NL</button>
+      </div>
+    </div>
+
+    <div class="frame">
+      <h2 data-t="frameH"></h2>
+      <p data-t="frameP"></p>
+      <details class="notes">
+        <summary><span class="chev">▶</span><span data-t="notesSummary"></span></summary>
+        <ul id="notesList"></ul>
+      </details>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="wrap">
+    <div class="ctl-head">
+      <span class="label" data-t="ctlLabel"></span>
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="search" type="search" data-t-placeholder="searchPlaceholder" aria-label="Search">
+        <button id="clear" aria-label="Clear">×</button>
+      </div>
+    </div>
+    <div id="pillGroups"></div>
+  </div>
+</div>
+
+<main class="stage">
+  <div class="wrap" id="stage"></div>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div>
+      <h4 data-t="howH"></h4>
+      <p data-t="howP"></p>
+      <div class="legend">
+        <span><i style="background:var(--no)"></i><span data-t="legNo"></span></span>
+        <span><i style="background:var(--partial)"></i><span data-t="legPartial"></span></span>
+        <span><i style="background:var(--full)"></i><span data-t="legFull"></span></span>
+      </div>
+      <button class="printbtn" onclick="window.print()" data-t="printBtn"></button>
+    </div>
+    <div>
+      <h4 data-t="sourcesH"></h4>
+      <p class="attrib"><a href="https://doi.org/10.1177/02734753241305980" target="_blank" rel="noopener" data-t="attrib1link"></a><span data-t="attrib1rest"></span></p>
+      <p class="attrib"><a href="https://www.aiassessmentscale.com/" target="_blank" rel="noopener" data-t="attrib2link"></a><span data-t="attrib2rest"></span></p>
+      <p class="attrib" data-t="attrib3"></p>
+      <p class="muted" data-t="muted"></p>
+    </div>
+  </div>
+  <div class="wrap license-bar">
+    <div class="cc-chips" aria-hidden="true">
+      <span>CC</span><span>BY</span><span>NC</span><span>SA</span>
+    </div>
+    <p class="cc-text"><strong data-t="ccStrong"></strong> <span data-t="ccBody"></span></p>
+  </div>
+</footer>
+
+<script>
+/* ================================================================
+   CONTENT — all translatable strings and card data
+   ================================================================ */
+
+const CONTENT = {
+  en: {
+    /* --- UI strings --- */
+    eyebrow: "Assessment redesign aid · one possible lens",
+    h1: `Assessment <em>Cards</em>`,
+    lede: "A way to rethink an assessment when generative AI is in the room. Choose the kind of thinking you want to assess, then compare what the task could look like with no AI, partial AI, or full AI use.",
+    frameH: "This is one model — not the model",
+    frameP: `These cards combine a revised, AI-aware version of <strong>Bloom's taxonomy</strong> (Gonsalves, 2024) with a simplified three-level <strong>AI Assessment Scale</strong> (Furze, 2024). It is a useful starting point, but it is deliberately one lens among several. Since generative AI arrived, a number of frameworks have reworked, inverted, or extended Bloom's and proposed their own scales for AI use — Furze's own scale, for instance, uses five levels rather than three. Treat the cards as <strong>prompts for your own thinking</strong>, not a prescription. Adapt them to your learning outcomes and your students.`,
+    notesSummary: "Reading guide from your colleague's matrix",
+    notes: [
+      "The list is <strong>not exhaustive</strong> — there are always more examples to give.",
+      "Examples are <strong>not locked to one cell</strong>; many fit perfectly elsewhere too.",
+      "Components can be <strong>combined</strong> for a more integrated, complex whole.",
+      "The content is up to your programme — these are generic examples still to be aligned with the learning outcome(s).",
+      "In the <strong>no-AI</strong> column, activities logically take place in class or in close coordination with students, in response to their learning needs."
+    ],
+    ctlLabel: "Choose a dimension to assess",
+    searchPlaceholder: "Search all cards (e.g. rubric, prompt, ethics)…",
+    redesignHint: "↔ Read across the columns to shift the same task between no, partial and full AI use.",
+    assessing: "Assessing",
+    search: "Search",
+    resultsSingle: "card across all dimensions and AI levels.",
+    resultsPlural: "cards across all dimensions and AI levels.",
+    noResults: "No cards match that term. Try a broader word, or clear the search to browse by dimension.",
+    howH: "How to use these cards for redesign",
+    howP: "Find the dimension closest to what your current task assesses. Read across the three columns: the no-AI card is your \"AI-resistant in-class\" version, partial-AI keeps the student doing the cognitive work while AI assists, and full-AI shifts the student toward judging, auditing, and reflecting on AI output. Pick the column that matches the level of AI use you want to permit, then adapt the wording to your learning outcomes.",
+    legNo: "No AI — AI not permitted",
+    legPartial: "Partial AI — AI partly permitted",
+    legFull: "Full AI — AI fully permitted",
+    printBtn: "Print / save as PDF",
+    sourcesH: "Sources & attribution",
+    attrib1link: "&ldquo;Generative AI\u2019s Impact on Critical Thinking: Revisiting Bloom\u2019s Taxonomy&rdquo;",
+    attrib1rest: " by Chahna Gonsalves (2024), Journal of Marketing Education, licensed under CC BY-NC 4.0. Used here for the AI-aware Bloom\u2019s dimensions.",
+    attrib2link: "AI Assessment Scale (AIAS)",
+    attrib2rest: " by Perkins, Furze, Roe &amp; MacVaugh (2024), licensed under CC BY-NC-SA 4.0. Adapted here from five levels to three (no / partial / full AI).",
+    attrib3: "Matrix of example assessments compiled by a colleague at Het Haagse CTL / THUAS, shared with permission.",
+    muted: "Other emerging frameworks rethink assessment differently; this card set is one route among several.",
+    ccStrong: "This resource is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0).",
+    ccBody: "You may share and adapt it for non-commercial purposes, provided you credit the sources above and license any adaptations under the same terms. Full licence: creativecommons.org/licenses/by-nc-sa/4.0",
+    levels: [
+      {key:"no",      label:"No AI",      sub:"AI not permitted",    badge:"0"},
+      {key:"partial", label:"Partial AI", sub:"AI partly permitted", badge:"½"},
+      {key:"full",    label:"Full AI",    sub:"AI fully permitted",  badge:"∞"}
+    ],
+    groups: [
+      {name:"Bloom's cognitive levels", dims:[0,1,2,3,4,5]},
+      {name:"AI-integrated dimensions", dims:[6,7,8,9,10,11,12,13,14]}
+    ],
+    dims: [
+      { name:"Remember", desc:"Recalling facts, terms and basic concepts.",
+        no:["Knowledge quiz / test with closed questions (in class or online).","Oral check: a short conceptual interview.","Match assignment: connect concepts with their definitions.","Flashcard activity: the student makes their own set of concepts.","Create a knowledge poster."],
+        partial:["Check AI-generated quiz questions: the student corrects mistakes and explains them.","Completion assignment: AI generates incomplete definitions that the student completes.","Conceptual matrix: AI makes proposals, the student validates and corrects."],
+        full:["AI summary analysis: the student lets AI summarise the basic knowledge and reflects on completeness and/or bias.","Compare several AI explanations of a concept and draw conclusions about accuracy.","AI tutor route: the student uses AI to train knowledge and reports on their progress."] },
+
+      { name:"Understand", desc:"Explaining ideas and interpreting meaning.",
+        no:["Short explanation presentation on a core concept.","Intervision: the student explains their understanding to a classmate.","Draw a concept map by hand.","Case: explain a situation in your own words."],
+        partial:["AI provides an example → the student explains why it is or is not correct.","AI provides explanations → the student assesses accuracy (fact-check + motivation).","The student improves an AI explanation and substantiates what was wrong."],
+        full:["AI creates explanations → the student makes a reflection video about their interpretation.","The student has AI give two different perspectives and summarises the differences.","AI explains a concept to different audiences → the student evaluates accessibility."] },
+
+      { name:"Apply", desc:"Using knowledge in concrete situations.",
+        no:["Case assignment in class: apply theory to a concrete situation.","Role play in which the student applies the theory.","Calculations / technical assignments.","Perform process steps (e.g. intake, analysis, plan).","Conversation with a client/customer in which knowledge must be applied.","Open-book test.","Performance assessment: judging competence from an observation of actions during a task."],
+        partial:["AI as a sparring partner: students ask for advice but justify their own choices, orally or in writing, in class.","AI provides solution suggestions → the student chooses and motivates the best option.","AI generates scenarios → the student applies theory to one scenario.","Performance assessment based on an AI-generated roadmap."],
+        full:["The student has AI generate an application and assesses its quality.","AI simulates a practical situation (e.g. a conversation); the student reflects on their actions.","Workflow assignment: AI makes a step-by-step plan, the student tests it in practice and reflects."] },
+
+      { name:"Analyze", desc:"Breaking material into parts and seeing relationships.",
+        no:["Analytical case: identify the problem, causes and stakeholders.","Compare sources on reliability and angle.","Dissect the argumentation structure in a text or conversation."],
+        partial:["AI makes an analysis → the student looks for errors and substantiates corrections (or correctness).","The student uses AI for a technical calculation but does the analysis themselves.","AI generates alternative perspectives → the student assesses them critically.","AI organises data → the student interprets, analyses and explains it.","AI summary check for argumentation and reasoning."],
+        full:["The student has AI produce multiple analyses and compares them.","AI-based data analysis → the student assesses validity and assumptions.","AI performs sentiment / text analysis → the student interprets the results.","Analysis audit: the student assesses risks, bias and reliability of the AI analysis."] },
+
+      { name:"Evaluate", desc:"Making and defending judgements against criteria.",
+        no:["Assessment essay with a substantiated point of view.","Jury assignment: the student judges several cases against predetermined criteria.","Peer review of a fellow student's product.","Ethics dialogue: the student must defend a position."],
+        partial:["AI gives an opinion → the student substantiates why it is or is not correct.","AI gives two contradictory evaluations → the student chooses and motivates.","The student uses AI to generate extra perspectives, but weighs them themselves.","Rubric check with AI: AI makes proposals, the student improves the rubric and justifies the choices."],
+        full:["The student has AI perform an evaluation and assesses its quality and argumentation.","AI generates a risk analysis → the student assesses assumptions and blind spots.","AI makes a peer review → the student analyses what is missing and adds to it."] },
+
+      { name:"Create", desc:"Producing original, coherent work.",
+        no:["Design a prototype, plan, proposal or concept (100% own work).","Creative assignment: create a campaign, script or manual.","Write a research proposal.","Build a portfolio with your own designs and reflections.","Organise an activity that combines different competencies."],
+        partial:["AI as a brainstorming partner; the student works out the ideas and justifies choices.","AI sketch → the student develops it into a final product.","AI generates three variants → the student chooses and creates the final version.","AI helps with structure → the student fills in the content themselves (e.g. a research design).","Create a blog or website about your own experiences."],
+        full:["AI generates a design/plan; the student assesses its quality and adjusts it.","AI creates a prototype → the student runs a user test and reflects on usability.","AI-generated product → the student writes a critical analysis of ethics, bias and applicability."] },
+
+      { name:"Discover", desc:"Rapid information gathering and idea generation using AI.",
+        no:["Short brainstorm (e.g. with post-its): the student supplies ideas, clusters them and substantiates within a time limit.","The student searches for relevant sources, describes the search strategy and assesses reliability.","The student visualises ideas and their interrelationships around a problem (concept mapping).","10 ideas in 10 minutes: demonstrating creativity under time pressure."],
+        partial:["AI idea funnel: AI generates options, the student selects and motivates.","AI suggests research directions → the student makes responsible choices.","AI as a tool for literature search terms; the student selects the relevant sources.","Scenario exploration: AI outlines future scenarios, the student analyses their potential.","AI idea generation + human filtering: the student asks AI for ideas, but selects what is useful and substantiates the choices.","Co-creation of a mind map: the student drafts with AI, then adds structure, prioritisation and missing ideas.","Iterative idea refinement: the student uses AI suggestions but rewrites and interprets each contribution."],
+        full:["AI-driven exploration of a new domain → the student assesses quality and blind spots.","AI conducts a mini literature review → the student evaluates usability.","Capture an exploratory chat journey with AI → the student reflects on the discoveries.","AI-powered research sprint: the student gathers a complete, structured overview of sources, insights or trends via AI within 10 minutes.","AI divergent → convergent process: the student generates broadly, uses AI to cluster, and refines into 1–2 applicable concepts.","AI summary benchmark: the student compares AI summaries from multiple tools and argues which output is most useful.","Design sprint with AI: students work in steps (problem analysis → ideation → prototyping → evaluation) with AI accelerating each component."] },
+
+      { name:"Collaboration", desc:"AI acts as a cognitive partner in the joint creation of knowledge.",
+        no:["Co-creation conversations in groups; students build on each other's insights.","Concept development from theory, without AI, but with peer review.","Substantiated reasoning or a mini-essay; the student creates knowledge by merging sources."],
+        partial:["The student uses AI as a sparring partner only to generate counterarguments, perspectives or alternative arguments, but processes them independently.","The student runs a limited number of AI interactions and reflects on what the dialogue added to their own thinking.","AI makes suggestions, but students must clearly show what knowledge they added and why."],
+        full:["The student holds an extensive dialogue with AI on a complex subject and delivers a product where the interaction demonstrably leads to new insight.","A report (or similar) describing how AI helped with synthesis, theory building or concept development.","The student uses multiple AI agents in different roles (e.g. critic, expert, futurist) and integrates the output into a substantiated final product."] },
+
+      { name:"Ethical reasoning", desc:"Balancing ethical issues and safeguarding academic integrity when using AI.",
+        no:["Students analyse a case about AI use and take a reasoned position.","Students hold a debate about AI ethics.","Students apply a chosen ethical framework to AI case studies."],
+        partial:["AI outlines a moral dilemma → the student uses their own frameworks to weigh it.","AI provides a moral judgement → the student examines and corrects biases.","Opposing views from AI → the student forms their own judgement.","AI ethics scan of an idea/product → the student validates the criticism."],
+        full:["AI generates multiple moral frameworks → the student assesses their applicability.","AI makes a full ethical analysis; the student does a quality check.","Ethics audit of an AI statement: the student investigates the risks, interests and effects."] },
+
+      { name:"Investigate & refine", desc:"Asking targeted questions to improve AI-generated insights incrementally.",
+        no:["Develop a research design.","Collect and code data without digital tools.","Peer-review round on the research questions.","Explain validity and reliability testing."],
+        partial:["AI helps sharpen the research questions; the student justifies the choices.","AI generates analysis codes; the student chooses and adjusts.","AI-assisted literature search terms; the student selects the relevant hits.","AI makes a preliminary analysis; the student checks for bias."],
+        full:["AI performs the data analysis; the student interprets and assesses quality.","AI provides a synthesis matrix; the student tests completeness.","AI does a validity check; the student evaluates assumptions and limitations."] },
+
+      { name:"Articulating", desc:"Formulating precise prompts for accurate output.",
+        no:["The student receives prompts of varying quality, analyses what goes right/wrong, rewrites them and motivates the improvements.","Students design a full prompt but do not run it with AI; assessed on structure: goal, role, step-by-step plan, constraints, expected output.","Prompt writing for a given scenario and expected output."],
+        partial:["Students write a prompt and use AI to get feedback on that prompt.","Students create two of their own prompts, run both with AI and analyse the differences.","Students develop a professional product (advice, analysis, mock assignment); AI may only be used within one prompt section."],
+        full:["The student builds a multi-step prompt with role, context, restrictions, evaluation criteria and control steps.","The student formulates and runs prompts, then develops an assessment framework to judge the quality of the AI output.","The student designs a prompt workflow (e.g. planning → analysis → synthesis → format) and accounts for the choices, risks and improvements."] },
+
+      { name:"Iterative learning", desc:"Taking part in a process of continuous learning and evaluation.",
+        no:["Build a prototype → feedback round → improve.","Scrum sprint with a retrospective.","Improvement plan for an existing product.","Cyclical reflection (plan–do–check–act)."],
+        partial:["AI offers improvement options on a product; the student motivates whether to include them.","AI analyses user feedback; the student processes the findings.","AI makes an iteration plan; the student checks feasibility.","AI tests a prototype via simulation; the student assesses the outcomes."],
+        full:["AI develops iteration proposals; the student chooses and justifies.","AI builds a new prototype version; the student evaluates it.","AI simulates iterative cycles; the student reflects on quality."] },
+
+      { name:"Adjusting & improving — technology", desc:"Combining AI and traditional tools to improve learning outcomes.",
+        no:["Technical improvement analysis of a system or process.","Manual error analysis.","Write and run a test plan.","Collect and process user feedback."],
+        partial:["AI makes an error analysis; the student validates it.","AI generates optimisations; the student selects and justifies.","AI makes UX suggestions; the student tests them in practice.","AI as a monitoring tool; the student analyses the outcomes."],
+        full:["AI optimises the system; the student assesses risks and assumptions.","AI simulates improvements; the student interprets the scenarios.","AI does automatic error detection; the student reflects on reliability."] },
+
+      { name:"Adjusting & improving — information", desc:"Combining AI output with traditional sources for more depth and reliability.",
+        no:["Information quality check: the student assesses sources for reliability, bias and topicality.","Comparison assignment: compare several sources and formulate points for improvement.","Manual data cleaning: detect and correct errors in a dataset.","Information restructuring: the student rewrites chaotic text into a clear structure.","Create a source matrix: extract and organise the core information from sources."],
+        partial:["AI generates a list of possible errors in a text → the student confirms or corrects.","AI does a first screening of sources; the student substantiates whether the selection is right.","AI makes a first data visualisation; the student assesses and improves it.","AI analyses a dataset; the student checks for wrong assumptions or outliers.","AI poses critical questions; the student adjusts the information accordingly."],
+        full:["AI analyses and optimises the information; the student assesses quality and risks.","AI makes a reliability score; the student evaluates whether it is correct.","AI reconstructs a dataset; the student reflects on logic, transparency and validity.","AI does a complete information restructuring; the student audits it for accuracy."] },
+
+      { name:"Reflective thinking", desc:"Critically evaluating the limitations of AI and your steering strategies.",
+        no:["Reflection report using STARR, Korthagen or another framework.","Reflection conversation with a teacher or peer.","Portfolio with development points and supporting evidence.","Reflection round after an assignment: what went well / less well?","Diary or logbook reviewing the learning activities."],
+        partial:["AI asks reflection questions; the student writes their own reflection (no AI text).","AI gives feedback on an entered reflection; the student adjusts it and justifies the improvements.","AI summarises the student's work; the student reflects on how recognisable that summary is.","AI helps make patterns in reflections visible; the students interpret them themselves.","AI generates alternative perspectives; the student reflects on their impact."],
+        full:["AI writes an (inaccurate) reflection; the student assesses what is missing and rewrites their own.","AI makes a growth analysis from previous assignments; the student reflects on its correctness.","AI simulates how a professional would reflect; the student compares this with their own development.","Metacognitive audit: AI reflects on the student's work, the student critically assesses that reflection."] }
+    ]
+  },
+
+  /* ================================================================
+     DUTCH
+     ================================================================ */
+  nl: {
+    eyebrow: "Hulpmiddel bij het herontwerpen van toetsing · één mogelijke lens",
+    h1: `Assessment <em>Kaarten</em>`,
+    lede: "Een manier om een toetsvorm te heroverwegen nu generatieve AI een rol speelt. Kies het denkniveau dat je wilt toetsen, en vergelijk hoe de opdracht eruit kan zien zonder AI, met gedeeltelijk AI-gebruik, of met volledig AI-gebruik.",
+    frameH: "Dit is één model — niet hét model",
+    frameP: `Deze kaarten combineren een herziene, AI-bewuste versie van de <strong>taxonomie van Bloom</strong> (Gonsalves, 2024) met een vereenvoudigde driestaps <strong>AI Assessment Scale</strong> (Furze, 2024). Het is een nuttig vertrekpunt, maar nadrukkelijk één lens onder meerdere. Sinds de komst van generatieve AI hebben diverse frameworks Bloom's taxonomie herzien, omgekeerd of uitgebreid, en eigen schalen voor AI-gebruik voorgesteld — de oorspronkelijke schaal van Furze heeft bijvoorbeeld vijf niveaus in plaats van drie. Gebruik de kaarten als <strong>aanzet voor je eigen denken</strong>, niet als voorschrift. Pas ze aan je leeruitkomsten en je studenten aan.`,
+    notesSummary: "Leeswijzer bij de matrix van je collega",
+    notes: [
+      "De lijst is <strong>niet uitputtend</strong> — er zijn altijd meer voorbeelden te geven.",
+      "Voorbeelden zijn <strong>niet gekoppeld aan één cel</strong>; veel passen ook elders prima.",
+      "Onderdelen kunnen worden <strong>gecombineerd</strong> tot een meer geïntegreerd, complex geheel.",
+      "De inhoud is afhankelijk van je opleiding — dit zijn generieke voorbeelden die nog afgestemd moeten worden op de betreffende leeruitkomst(en).",
+      "In de kolom <strong>geen AI</strong> vinden activiteiten logischerwijs plaats in de les of in nauwe afstemming met studenten, aansluitend bij hun leerbehoeften."
+    ],
+    ctlLabel: "Kies een dimensie om te toetsen",
+    searchPlaceholder: "Doorzoek alle kaarten (bijv. rubric, prompt, ethiek)…",
+    redesignHint: "↔ Lees over de kolommen om dezelfde opdracht te verschuiven van geen naar gedeeltelijk naar volledig AI-gebruik.",
+    assessing: "Toetsen",
+    search: "Zoeken",
+    resultsSingle: "kaart gevonden in alle dimensies en AI-niveaus.",
+    resultsPlural: "kaarten gevonden in alle dimensies en AI-niveaus.",
+    noResults: "Geen kaarten gevonden voor deze term. Probeer een breder woord, of wis de zoekopdracht om per dimensie te bladeren.",
+    howH: "Hoe gebruik je deze kaarten bij het herontwerpen?",
+    howP: "Zoek de dimensie die het dichtst bij wat je huidige toetsvorm toetst. Lees over de drie kolommen: de geen-AI-kaart is je 'AI-bestendige in-class'-versie, gedeeltelijk AI houdt de student aan het werk terwijl AI ondersteunt, en volledig AI verschuift de focus naar beoordelen, controleren en reflecteren op AI-output. Kies de kolom die aansluit bij het door jou gewenste AI-gebruik, en pas de formulering aan je leeruitkomsten aan.",
+    legNo: "Geen AI — AI niet toegestaan",
+    legPartial: "Gedeeltelijk AI — AI gedeeltelijk toegestaan",
+    legFull: "Volledig AI — AI volledig toegestaan",
+    printBtn: "Afdrukken / opslaan als PDF",
+    sourcesH: "Bronnen & attributie",
+    attrib1link: "&ldquo;Generative AI\u2019s Impact on Critical Thinking: Revisiting Bloom\u2019s Taxonomy&rdquo;",
+    attrib1rest: " door Chahna Gonsalves (2024), Journal of Marketing Education, gelicenseerd onder CC BY-NC 4.0. Hier gebruikt voor de AI-bewuste Bloom-dimensies.",
+    attrib2link: "AI Assessment Scale (AIAS)",
+    attrib2rest: " door Perkins, Furze, Roe &amp; MacVaugh (2024), gelicenseerd onder CC BY-NC-SA 4.0. Hier aangepast van vijf naar drie niveaus (geen / gedeeltelijk / volledig AI).",
+    attrib3: "Matrix met voorbeeldopdrachten samengesteld door een collega bij Het Haagse CTL / THUAS, gedeeld met toestemming.",
+    muted: "Er zijn andere nieuwe frameworks die toetsing op een andere manier heroverwegen; deze kaartset is één route onder meerdere.",
+    ccStrong: "Dit materiaal is gelicenseerd onder Creative Commons Naamsvermelding-NietCommercieel-GelijkDelen 4.0 Internationaal (CC BY-NC-SA 4.0).",
+    ccBody: "Je mag het delen en aanpassen voor niet-commerciële doeleinden, mits je de bovenstaande bronnen vermeldt en aanpassingen onder dezelfde voorwaarden licenseert. Volledige licentie: creativecommons.org/licenses/by-nc-sa/4.0",
+    levels: [
+      {key:"no",      label:"Geen AI",         sub:"AI niet toegestaan",          badge:"0"},
+      {key:"partial", label:"Gedeeltelijk AI",  sub:"AI gedeeltelijk toegestaan",  badge:"½"},
+      {key:"full",    label:"Volledig AI",      sub:"AI volledig toegestaan",      badge:"∞"}
+    ],
+    groups: [
+      {name:"Cognitieve niveaus van Bloom", dims:[0,1,2,3,4,5]},
+      {name:"AI-geïntegreerde dimensies",   dims:[6,7,8,9,10,11,12,13,14]}
+    ],
+    dims: [
+      { name:"Onthouden", desc:"Feiten, termen en basisconcepten reproduceren.",
+        no:["Kennisquiz / toets met gesloten vragen (in de les of online).","Mondeling: een kort conceptueel interview.","Koppelingstool: verbind concepten met hun definities.","Flashcard-activiteit: de student maakt zijn/haar eigen set van begrippen.","Maak een kennisposter."],
+        partial:["Controleer door AI gegenereerde quizvragen: de student verbetert fouten en legt deze uit.","Aanvulopdracht: AI genereert onvolledige definities die de student aanvult.","Conceptuele matrix: AI doet voorstellen, de student valideert en corrigeert."],
+        full:["AI-samenvattingsanalyse: de student laat AI de basiskennis samenvatten en reflecteert op volledigheid en/of bias.","Vergelijk meerdere AI-uitleg van een concept en trek conclusies over nauwkeurigheid.","AI-tutorroute: de student gebruikt AI om kennis te trainen en rapporteert over de voortgang."] },
+
+      { name:"Begrijpen", desc:"Ideeën verklaren en betekenis interpreteren.",
+        no:["Korte uitlegpresentatie over een kernbegrip.","Intervisie: de student legt zijn/haar begrip uit aan een medestudent.","Teken een conceptmap met de hand.","Casus: beschrijf een situatie in eigen woorden."],
+        partial:["AI geeft een voorbeeld → de student legt uit waarom het wel of niet klopt.","AI geeft uitleg → de student beoordeelt de nauwkeurigheid (fact-check + motivatie).","De student verbetert een AI-uitleg en onderbouwt wat er niet klopte."],
+        full:["AI maakt uitleg → de student maakt een reflectievideo over zijn/haar interpretatie.","De student laat AI twee verschillende perspectieven geven en vat de verschillen samen.","AI legt een concept uit aan verschillende doelgroepen → de student evalueert de toegankelijkheid."] },
+
+      { name:"Toepassen", desc:"Kennis gebruiken in concrete situaties.",
+        no:["Casusopdracht in de les: pas theorie toe op een concrete situatie.","Rollenspel waarbij de student de theorie toepast.","Berekeningen / technische opdrachten.","Procesmatig handelen (bijv. intake, analyse, plan).","Gesprek met een cliënt/klant waarbij kennis moet worden toegepast.","Openboektoets.","Performatieve toets: beoordeling van bekwaamheid op basis van observatie van handelingen tijdens een taak."],
+        partial:["AI als sparringpartner: studenten vragen om advies, maar onderbouwen hun eigen keuzes mondeling of schriftelijk, in de les.","AI geeft oplossingsuggesties → de student kiest en motiveert de beste optie.","AI genereert scenario's → de student past de theorie toe op één scenario.","Performatieve toets op basis van een door AI gegenereerde routekaart."],
+        full:["De student laat AI een toepassing genereren en beoordeelt de kwaliteit.","AI simuleert een praktijksituatie (bijv. een gesprek); de student reflecteert op zijn/haar handelen.","Workflowopdracht: AI maakt een stap-voor-stapplan, de student test het in de praktijk en reflecteert."] },
+
+      { name:"Analyseren", desc:"Materiaal opsplitsen in delen en verbanden zien.",
+        no:["Analytische casus: identificeer het probleem, oorzaken en betrokkenen.","Vergelijk bronnen op betrouwbaarheid en invalshoek.","Ontleed de argumentatiestructuur in een tekst of gesprek."],
+        partial:["AI maakt een analyse → de student zoekt fouten en onderbouwt de correcties (of juistheid).","De student gebruikt AI voor een technische berekening, maar doet de analyse zelf.","AI genereert alternatieve perspectieven → de student beoordeelt deze kritisch.","AI organiseert data → de student interpreteert, analyseert en verklaart.","AI-samenvattingscheck op argumentatie en redenering."],
+        full:["De student laat AI meerdere analyses maken en vergelijkt deze.","AI-gebaseerde data-analyse → de student beoordeelt validiteit en aannames.","AI voert sentiment- / tekstanalyse uit → de student interpreteert de resultaten.","Analyse-audit: de student beoordeelt risico's, bias en betrouwbaarheid van de AI-analyse."] },
+
+      { name:"Evalueren", desc:"Oordelen vormen en verdedigen op basis van criteria.",
+        no:["Beoordelingsessay met een onderbouwd standpunt.","Jury-opdracht: de student beoordeelt meerdere casus op basis van vooraf bepaalde criteria.","Peer review van het product van een medestudent.","Ethisch debat: de student moet een positie verdedigen."],
+        partial:["AI geeft een mening → de student onderbouwt waarom dit wel of niet klopt.","AI geeft twee tegenstrijdige beoordelingen → de student kiest en motiveert.","De student gebruikt AI om extra perspectieven te genereren, maar weegt ze zelf.","Rubriccheck met AI: AI doet voorstellen, de student verbetert de rubric en motiveert de keuzes."],
+        full:["De student laat AI een evaluatie uitvoeren en beoordeelt de kwaliteit en argumentatie.","AI genereert een risicoanalyse → de student beoordeelt aannames en blinde vlekken.","AI maakt een peer review → de student analyseert wat ontbreekt en vult aan."] },
+
+      { name:"Creëren", desc:"Origineel en samenhangend werk produceren.",
+        no:["Ontwerp een prototype, plan, voorstel of concept (100% eigen werk).","Creatieve opdracht: maak een campagne, script of handleiding.","Schrijf een onderzoeksvoorstel.","Bouw een portfolio met eigen ontwerpen en reflecties.","Organiseer een activiteit die verschillende competenties combineert."],
+        partial:["AI als brainstormpartner; de student werkt de ideeën uit en motiveert keuzes.","AI-schets → de student ontwikkelt dit tot een eindproduct.","AI genereert drie varianten → de student kiest en maakt de definitieve versie.","AI helpt met structuur → de student vult de inhoud zelf in (bijv. een onderzoeksopzet).","Maak een blog of website over eigen ervaringen."],
+        full:["AI genereert een ontwerp/plan; de student beoordeelt de kwaliteit en past aan.","AI maakt een prototype → de student voert een gebruikerstest uit en reflecteert op bruikbaarheid.","AI-gegenereerd product → de student schrijft een kritische analyse van ethiek, bias en toepasbaarheid."] },
+
+      { name:"Ontdekken", desc:"Snel informatie verzamelen en ideeën genereren met AI.",
+        no:["Korte brainstorm (bijv. met post-its): de student levert ideeën, clustert ze en onderbouwt binnen een tijdslimiet.","De student zoekt relevante bronnen, beschrijft de zoekstrategie en beoordeelt de betrouwbaarheid.","De student visualiseert ideeën en hun onderlinge relaties rond een probleem (conceptmapping).","10 ideeën in 10 minuten: creativiteit tonen onder tijdsdruk."],
+        partial:["AI-ideeëntrechter: AI genereert opties, de student selecteert en motiveert.","AI stelt onderzoeksrichtingen voor → de student maakt verantwoorde keuzes.","AI als hulpmiddel voor zoektermen in de literatuur; de student selecteert de relevante bronnen.","Scenarioverkenning: AI schetst toekomstscenario's, de student analyseert hun potentieel.","AI-ideeëngeneratie + menselijk filteren: de student vraagt AI om ideeën, maar selecteert wat bruikbaar is en onderbouwt de keuzes.","Co-creatie van een mindmap: de student stelt op met AI, voegt vervolgens structuur, prioritering en ontbrekende ideeën toe.","Iteratieve ideeënverfeining: de student gebruikt AI-suggesties, maar schrijft en interpreteert elke bijdrage om."],
+        full:["AI-gedreven verkenning van een nieuw domein → de student beoordeelt kwaliteit en blinde vlekken.","AI voert een mini-literatuuronderzoek uit → de student evalueert de bruikbaarheid.","Leg een verkennende chatjourney met AI vast → de student reflecteert op de ontdekkingen.","AI-gestuurde onderzoekssprint: de student verzamelt binnen 10 minuten via AI een compleet, gestructureerd overzicht van bronnen, inzichten of trends.","AI divergent → convergent proces: de student genereert breed, gebruikt AI om te clusteren en verfijnt tot 1–2 toepasbare concepten.","AI-samenvattingsbenchmark: de student vergelijkt AI-samenvattingen van meerdere tools en beargumenteert welke output het meest bruikbaar is.","Ontwerpsprint met AI: studenten werken in stappen (probleemanalyse → ideevorming → prototyping → evaluatie) waarbij AI elk onderdeel versnelt."] },
+
+      { name:"Samenwerken", desc:"AI als cognitieve partner bij de gezamenlijke kennisopbouw.",
+        no:["Co-creatiegesprekken in groepen; studenten bouwen voort op elkaars inzichten.","Conceptontwikkeling vanuit theorie, zonder AI, maar met peer review.","Onderbouwde redenering of een mini-essay; de student creëert kennis door bronnen samen te voegen."],
+        partial:["De student gebruikt AI alleen als sparringpartner om tegenargumenten, perspectieven of alternatieve redenaties te genereren, maar verwerkt ze zelfstandig.","De student voert een beperkt aantal AI-interacties uit en reflecteert op wat de dialoog heeft toegevoegd aan zijn/haar eigen denken.","AI doet suggesties, maar studenten moeten duidelijk laten zien welke kennis zij hebben toegevoegd en waarom."],
+        full:["De student voert een uitgebreide dialoog met AI over een complex onderwerp en levert een product op waarbij de interactie aantoonbaar tot nieuw inzicht leidt.","Een verslag (of vergelijkbaar) dat beschrijft hoe AI heeft bijgedragen aan synthese, theorievorming of conceptontwikkeling.","De student gebruikt meerdere AI-agenten in verschillende rollen (bijv. criticus, expert, futurist) en integreert de output in een onderbouwd eindproduct."] },
+
+      { name:"Ethisch redeneren", desc:"Ethische kwesties afwegen en academische integriteit bewaken bij AI-gebruik.",
+        no:["Studenten analyseren een casus over AI-gebruik en nemen een beredeneerd standpunt in.","Studenten houden een debat over AI-ethiek.","Studenten passen een gekozen ethisch kader toe op AI-casussen."],
+        partial:["AI schetst een moreel dilemma → de student gebruikt eigen kaders om het af te wegen.","AI geeft een moreel oordeel → de student onderzoekt en corrigeert bias.","Tegengestelde standpunten van AI → de student vormt zijn/haar eigen oordeel.","AI-ethicsscan van een idee/product → de student valideert de kritiek."],
+        full:["AI genereert meerdere morele kaders → de student beoordeelt hun toepasbaarheid.","AI maakt een volledige ethische analyse; de student voert een kwaliteitscheck uit.","Ethische audit van een AI-uitspraak: de student onderzoekt de risico's, belangen en effecten."] },
+
+      { name:"Onderzoeken & verfijnen", desc:"Gerichte vragen stellen om AI-gegenereerde inzichten stapsgewijs te verbeteren.",
+        no:["Ontwikkel een onderzoeksopzet.","Verzamel en codeer data zonder digitale hulpmiddelen.","Peer-reviewronde op de onderzoeksvragen.","Leg validiteits- en betrouwbaarheidstesting uit."],
+        partial:["AI helpt de onderzoeksvragen aan te scherpen; de student motiveert de keuzes.","AI genereert analysecodes; de student kiest en past aan.","AI-ondersteunde zoektermen voor de literatuur; de student selecteert de relevante resultaten.","AI maakt een voorlopige analyse; de student controleert op bias."],
+        full:["AI voert de data-analyse uit; de student interpreteert en beoordeelt de kwaliteit.","AI levert een synthesematrix; de student toetst de volledigheid.","AI doet een validiteitscheck; de student evalueert aannames en beperkingen."] },
+
+      { name:"Articuleren", desc:"Nauwkeurige prompts formuleren voor accurate output.",
+        no:["De student ontvangt prompts van wisselende kwaliteit, analyseert wat er goed/fout gaat, schrijft ze om en motiveert de verbeteringen.","Studenten ontwerpen een volledige prompt maar voeren deze niet uit met AI; beoordeeld op structuur: doel, rol, stap-voor-stapplan, beperkingen, verwachte output.","Prompt schrijven voor een gegeven scenario en verwachte output."],
+        partial:["Studenten schrijven een prompt en gebruiken AI om feedback op die prompt te krijgen.","Studenten maken twee eigen prompts, voeren beide uit met AI en analyseren de verschillen.","Studenten ontwikkelen een professioneel product (advies, analyse, nep-opdracht); AI mag alleen worden gebruikt binnen één promptsectie."],
+        full:["De student bouwt een meerstappenprompt met rol, context, beperkingen, evaluatiecriteria en controlemomenten.","De student formuleert en voert prompts uit, ontwikkelt vervolgens een beoordelingskader om de kwaliteit van de AI-output te beoordelen.","De student ontwerpt een promptworkflow (bijv. planning → analyse → synthese → format) en verantwoordt de keuzes, risico's en verbeteringen."] },
+
+      { name:"Iteratief leren", desc:"Deelnemen aan een proces van continu leren en evalueren.",
+        no:["Bouw een prototype → feedbackronde → verbeter.","Scrum-sprint met een retrospective.","Verbeterplan voor een bestaand product.","Cyclische reflectie (plan–do–check–act)."],
+        partial:["AI biedt verbeteropties voor een product; de student motiveert of ze worden meegenomen.","AI analyseert gebruikersfeedback; de student verwerkt de bevindingen.","AI maakt een iteratieplan; de student toetst de haalbaarheid.","AI test een prototype via simulatie; de student beoordeelt de uitkomsten."],
+        full:["AI ontwikkelt iteratievoorstellen; de student kiest en motiveert.","AI bouwt een nieuwe prototypeverversie; de student evalueert deze.","AI simuleert iteratieve cycli; de student reflecteert op kwaliteit."] },
+
+      { name:"Aanpassen & verbeteren — technologie", desc:"AI en traditionele tools combineren om leerresultaten te verbeteren.",
+        no:["Technische verbeteranalyse van een systeem of proces.","Handmatige foutanalyse.","Schrijf en voer een testplan uit.","Verzamel en verwerk gebruikersfeedback."],
+        partial:["AI maakt een foutanalyse; de student valideert deze.","AI genereert optimalisaties; de student selecteert en motiveert.","AI doet UX-suggesties; de student test deze in de praktijk.","AI als monitoringtool; de student analyseert de uitkomsten."],
+        full:["AI optimaliseert het systeem; de student beoordeelt risico's en aannames.","AI simuleert verbeteringen; de student interpreteert de scenario's.","AI doet automatische foutdetectie; de student reflecteert op betrouwbaarheid."] },
+
+      { name:"Aanpassen & verbeteren — informatie", desc:"AI-output combineren met traditionele bronnen voor meer diepgang en betrouwbaarheid.",
+        no:["Informatiekwaliteitscheck: de student beoordeelt bronnen op betrouwbaarheid, bias en actualiteit.","Vergelijkingsopdracht: vergelijk meerdere bronnen en formuleer verbeterpunten.","Handmatige datacleaning: detecteer en corrigeer fouten in een dataset.","Informatieherschikking: de student herschrijft chaotische tekst tot een heldere structuur.","Maak een bronnenmatrix: extraheer en organiseer de kerninformatie uit bronnen."],
+        partial:["AI genereert een lijst van mogelijke fouten in een tekst → de student bevestigt of corrigeert.","AI doet een eerste screening van bronnen; de student onderbouwt of de selectie klopt.","AI maakt een eerste datavisualisatie; de student beoordeelt en verbetert deze.","AI analyseert een dataset; de student controleert op verkeerde aannames of uitschieters.","AI stelt kritische vragen; de student past de informatie dienovereenkomstig aan."],
+        full:["AI analyseert en optimaliseert de informatie; de student beoordeelt kwaliteit en risico's.","AI maakt een betrouwbaarheidsscore; de student evalueert of deze klopt.","AI reconstrueert een dataset; de student reflecteert op logica, transparantie en validiteit.","AI doet een volledige informatieherschikking; de student auditeert op nauwkeurigheid."] },
+
+      { name:"Reflectief denken", desc:"Kritisch nadenken over de beperkingen van AI en je eigen stuuraanpak.",
+        no:["Reflectieverslag op basis van STARR, Korthagen of een ander kader.","Reflectiegesprek met een docent of medestudent.","Portfolio met ontwikkelpunten en ondersteunend bewijs.","Reflectieronde na een opdracht: wat ging goed / minder goed?","Dagboek of logboek over de leeractiviteiten."],
+        partial:["AI stelt reflectievragen; de student schrijft zijn/haar eigen reflectie (geen AI-tekst).","AI geeft feedback op een ingevoerde reflectie; de student past aan en motiveert de verbeteringen.","AI vat het werk van de student samen; de student reflecteert op hoe herkenbaar die samenvatting is.","AI helpt patronen in reflecties zichtbaar te maken; de studenten interpreteren ze zelf.","AI genereert alternatieve perspectieven; de student reflecteert op hun impact."],
+        full:["AI schrijft een (onjuiste) reflectie; de student beoordeelt wat ontbreekt en herschrijft zijn/haar eigen.","AI maakt een groeianalyse op basis van eerdere opdrachten; de student reflecteert op de juistheid.","AI simuleert hoe een professional zou reflecteren; de student vergelijkt dit met zijn/haar eigen ontwikkeling.","Metacognitieve audit: AI reflecteert op het werk van de student, de student beoordeelt die reflectie kritisch."] }
+    ]
+  }
+};
+
+/* ================================================================
+   STATE + I18N ENGINE
+   ================================================================ */
+let lang = 'en';
+let current = 0;
+
+const stage      = document.getElementById("stage");
+const pillGroups = document.getElementById("pillGroups");
+const searchInput = document.getElementById("search");
+const clearBtn    = document.getElementById("clear");
+const levelColor  = {no:"var(--no)", partial:"var(--partial)", full:"var(--full)"};
+
+function t(key){ return CONTENT[lang][key]; }
+
+function applyUI(){
+  document.documentElement.lang = lang;
+  document.title = lang === 'en'
+    ? "Assessment Cards — rethinking assessment with AI"
+    : "Assessment Kaarten — hulpmiddel bij het herontwerpen van toetsing";
+
+  /* data-t text nodes */
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.getAttribute('data-t');
+    const val = t(key);
+    if(val !== undefined) el.innerHTML = val;
+  });
+
+  /* data-t-placeholder */
+  document.querySelectorAll('[data-t-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-t-placeholder');
+    const val = t(key);
+    if(val !== undefined) el.placeholder = val;
+  });
+
+  /* notes list */
+  const nl = document.getElementById('notesList');
+  if(nl) nl.innerHTML = t('notes').map(n => `<li>${n}</li>`).join('');
+
+  /* toggle buttons */
+  document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+  document.getElementById('btnNL').classList.toggle('active', lang === 'nl');
+}
+
+function setLang(l){
+  lang = l;
+  applyUI();
+  buildPills();
+  render();
+}
+
+/* ================================================================
+   RENDER
+   ================================================================ */
+function buildPills(){
+  const GROUPS = t('groups');
+  const DIMS   = t('dims');
+  pillGroups.innerHTML = GROUPS.map(g => {
+    const pills = g.dims.map(i => {
+      const d = DIMS[i];
+      const total = d.no.length + d.partial.length + d.full.length;
+      return `<button class="pill" role="button" aria-pressed="${i===current}" data-i="${i}">${d.name}<span class="n">${total}</span></button>`;
+    }).join('');
+    return `<div class="group-label">${g.name}</div><div class="pills">${pills}</div>`;
+  }).join('');
+  pillGroups.querySelectorAll('.pill').forEach(b => {
+    b.addEventListener('click', () => {
+      current = +b.dataset.i;
+      searchInput.value = '';
+      clearBtn.style.display = 'none';
+      render();
+    });
+  });
+}
+
+function cardHTML(text){
+  let s = text.replace(/→/g, '<span class="arrow">→</span>');
+  const m = s.match(/^([^:]{2,52}:)\s(.*)$/);
+  if(m){ s = `<span class="lead">${m[1]}</span> ${m[2]}`; }
+  return `<div class="card">${s}</div>`;
+}
+
+function renderDimension(){
+  const DIMS   = t('dims');
+  const LEVELS = t('levels');
+  const d = DIMS[current];
+  const cols = LEVELS.map(l => {
+    const cards = d[l.key].map(cardHTML).join('');
+    return `<div class="col" data-lv="${l.key}">
+      <div class="col-head"><div class="lv"><span class="badge">${l.badge}</span>${l.label}</div><div class="sub">${l.sub}</div></div>
+      <div class="col-body">${cards}</div>
+    </div>`;
+  }).join('');
+  stage.innerHTML = `
+    <div class="dim-head">
+      <div class="kicker">${t('assessing')} · ${d.name}</div>
+      <h3>${d.name}</h3>
+      <p>${d.desc}</p>
+      <div class="redesign-hint">${t('redesignHint')}</div>
+    </div>
+    <div class="columns">${cols}</div>`;
+  pillGroups.querySelectorAll('.pill').forEach(b =>
+    b.setAttribute('aria-pressed', (+b.dataset.i === current)));
+  const ctrl = document.querySelector('.controls');
+  if(ctrl) window.scrollTo({top: ctrl.offsetTop - 8, behavior:'instant'});
+}
+
+function esc(s){ return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function renderSearch(q){
+  const DIMS   = t('dims');
+  const LEVELS = t('levels');
+  const needle = q.toLowerCase();
+  const hits = [];
+  DIMS.forEach(d => LEVELS.forEach(l => d[l.key].forEach(text => {
+    if(text.toLowerCase().includes(needle)) hits.push({dim:d.name, l, text});
+  })));
+  const rx = new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig');
+  const cards = hits.map(h => {
+    const tx = esc(h.text).replace(rx,'<mark>$1</mark>');
+    return `<div class="rcard">
+      <div class="rtag"><span class="swatch" style="background:${levelColor[h.l.key]}"></span>
+        <span style="color:${levelColor[h.l.key]}">${h.l.label}</span><span class="lvl">· ${h.dim}</span></div>
+      <p>${tx}</p></div>`;
+  }).join('');
+  const meta = hits.length === 1
+    ? `1 ${t('resultsSingle')}`
+    : `${hits.length} ${t('resultsPlural')}`;
+  stage.innerHTML = `
+    <div class="dim-head"><div class="kicker">${t('search')}</div><h3>"${esc(q)}"</h3></div>
+    <p class="results-meta">${meta}</p>
+    ${hits.length
+      ? `<div class="results">${cards}</div>`
+      : `<div class="empty">${t('noResults')}</div>`}`;
+  pillGroups.querySelectorAll('.pill').forEach(b =>
+    b.setAttribute('aria-pressed','false'));
+}
+
+function render(){
+  const q = searchInput.value.trim();
+  if(q.length >= 2){ renderSearch(q); } else { renderDimension(); }
+}
+
+searchInput.addEventListener('input', () => {
+  clearBtn.style.display = searchInput.value ? 'block' : 'none';
+  render();
+});
+clearBtn.addEventListener('click', () => {
+  searchInput.value = '';
+  clearBtn.style.display = 'none';
+  searchInput.focus();
+  render();
+});
+
+/* Boot */
+applyUI();
+buildPills();
+renderDimension();
+</script>
+</body>
+</html>
